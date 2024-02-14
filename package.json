@@ -1,0 +1,15 @@
+{
+  "name": "nilptr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tailwindcss -i ./styles/tailwind.css .css -o ./styles/output.css",
+    "watch": "npx tailwindcss -i ./styles/tailwind.css -o ./styles/output.css --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

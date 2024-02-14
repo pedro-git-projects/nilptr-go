@@ -1,0 +1,42 @@
+@import './prism-gruvbox-light.css';
+@import './prism-gruvbox-dark.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply text-light-text dark:text-text;
+    }
+
+    header {
+        @apply bg-light-header dark:bg-header;
+    }
+
+    a {
+        @apply text-light-link dark:text-link;
+        @apply hover:text-light-link-hover dark:hover:text-link-hover;
+    }
+
+    article {
+        @apply bg-light-header dark:bg-header;
+
+    }
+
+    main {
+        @apply bg-light-background-dark dark:bg-background-dark;
+    }
+
+    footer {
+        @apply bg-light-header dark:bg-header;
+    }
+}
+
+.mobile-menu-link {
+    @apply block rounded-lg px-4 py-2 text-sm font-medium text-gray-700 text-center;
+}
+
+.show-mobile-menu {
+    @apply md:hidden absolute top-16 right-0 w-full z-10 flex flex-col items-center justify-center;
+}

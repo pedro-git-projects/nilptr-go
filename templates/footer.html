@@ -1,0 +1,21 @@
+{{ define footer }}
+
+<footer class="">
+  <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="sm:flex sm:items-center sm:justify-between">
+      <div class="flex justify-center sm:justify-start">
+        <img src="logo.svg" alt="Logo" width="80" height="80" />
+      </div>
+      <p id="copyright" class="mt-4 text-center text-sm lg:mt-0 lg:text-right">
+        &copy; nilptr. Direitos Reservados.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  let currentYear = new Date().getFullYear();
+  document.getElementById('copyright').innerHTML = "&copy; nilptr. Direitos Reservados. " + currentYear;
+</script>
+
+{{ end }}

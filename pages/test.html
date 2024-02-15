@@ -1,0 +1,26 @@
+{{template "base" .}}
+{{define "main" }}
+<html><head></head><body><h1 id="sample-blog-post" class="text-3xl font-extrabold sm:text-5xl">Sample Blog Post</h1>
+<p>This is a sample blog post written in Markdown. It includes various elements such as:</p>
+<h2 id="headers">Headers</h2>
+<p>You can use headers to organize your content.</p>
+<h3 id="subheader">Subheader</h3>
+<p>This is a subheader.</p>
+<h2 id="lists">Lists</h2>
+<p>You can create lists:</p>
+<ul>
+<li>Item 1</li>
+<li>Item 2</li>
+<li>Item 3</li>
+</ul>
+<h2 id="code-blocks">Code Blocks</h2>
+<p>You can include code blocks:</p>
+<pre class="my-4 p-4 rounded-md"><code class="language-go">package main
+
+import &#34;fmt&#34;
+
+func main() {
+    fmt.Println(&#34;Hello, world!&#34;)
+}
+</code></pre>
+</body></html>{{end}}

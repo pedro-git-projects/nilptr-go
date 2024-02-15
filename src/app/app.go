@@ -6,21 +6,23 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 	"text/template"
 
-	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/extension"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/renderer/html"
+	"github.com/pedro-git-projects/nilptr/src/blog"
+	"github.com/pedro-git-projects/nilptr/src/processor"
 )
 
 type App struct {
 	config      Config
 	router      *http.ServeMux
-	templates   map[string]*template.Template // slug -> template
 	errorLogger *log.Logger
 	infoLogger  *log.Logger
-	mdParser    goldmark.Markdown
+
+	templates map[string]*template.Template // slug -> template
+	posts     map[string]*blog.BlogPost     // slug -> blogpost
+	processor *processor.Processor
 }
 
 func parseFlags() Config {
@@ -53,15 +55,6 @@ func parseFlags() Config {
 	}
 }
 
-func initializeParser(app *App) {
-	md := goldmark.New(
-		goldmark.WithExtensions(extension.GFM),
-		goldmark.WithParserOptions(parser.WithAutoHeadingID()),
-		goldmark.WithRendererOptions(html.WithUnsafe()),
-	)
-	app.mdParser = md
-}
-
 func initializeLoggers(app *App) {
 	app.infoLogger = log.New(os.Stdout, fmt.Sprintf("%s::INFO ", app.config.env), log.Ldate|log.Ltime)
 	app.errorLogger = log.New(os.Stderr, fmt.Sprintf("%s::ERROR", app.config.env), log.Ldate|log.Ltime)
@@ -72,14 +65,31 @@ func New() *App {
 		config:    parseFlags(),
 		router:    http.NewServeMux(),
 		templates: make(map[string]*template.Template),
+		processor: processor.New(),
 	}
-	initializeParser(app)
 	initializeLoggers(app)
 	app.setupHandlers()
 	return app
 }
 
+func (app *App) loadTemplates(templatesDir string) {
+	files, err := filepath.Glob(filepath.Join(templatesDir, "*.html"))
+	if err != nil {
+		panic(err)
+	}
+
+	for _, file := range files {
+		templateName := strings.TrimSuffix(filepath.Base(file), ".html")
+		tmpl, err := template.ParseFiles(file)
+		if err != nil {
+			panic(err)
+		}
+		app.templates[templateName] = tmpl
+	}
+}
+
 func (app *App) Start() error {
 	app.infoLogger.Printf("Starting %s server on port :%d\n", app.config.env, app.config.port)
+	app.processor.ProcessAndSave("test.html")
 	return http.ListenAndServe(fmt.Sprintf(":%d", app.config.port), app.router)
 }

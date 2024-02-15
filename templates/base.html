@@ -1,0 +1,28 @@
+{{ define "base" }}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/nilptr.svg" />
+  <link rel="stylesheet" href="/styles/output.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nilptr</title>
+</head>
+
+<body class="min-h-screen flex flex-col">
+  <header>
+    {{ block "header" . }}{{ end }}
+  </header>
+  <main class="flex-grow">
+    {{ block "main" . }}{{ end }}
+  </main>
+  <footer>
+    {{ block "footer" . }}{{ end }}
+  </footer>
+</body>
+
+</html>
+
+{{ end }}

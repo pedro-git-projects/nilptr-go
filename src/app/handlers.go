@@ -1,35 +1,49 @@
 package app
 
 import (
-	"bytes"
-	"fmt"
 	"net/http"
-	"os"
 )
+
+// TODO: Create templates for the base website
+// organize like in HUGO
 
 func (app *App) setupHandlers() {
 	static := http.Dir("../static")
 	styles := http.Dir("../styles")
 	app.router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(static)))
 	app.router.Handle("/styles/", http.StripPrefix("/styles/", http.FileServer(styles)))
-	app.router.Handle("/blog", http.HandlerFunc(app.handleBlogPost))
+	app.router.Handle("GET /posts/{slug}", http.HandlerFunc(app.handleBlogPosts))
 }
 
-func (app *App) handleBlogPost(w http.ResponseWriter, r *http.Request) {
-	content, err := os.ReadFile("../posts/sample.md")
+func (app *App) handleBlogPosts(w http.ResponseWriter, r *http.Request) {
+	slug := r.PathValue("slug")
+	post, exists := app.posts[slug]
+	if !exists {
+		http.NotFound(w, r)
+		return
+	}
+
+	template := app.templates[post.TemplateName]
+	if template == nil {
+		http.Error(w, "nil template", http.StatusInternalServerError)
+		return
+	}
+
+	cssLinks := []string{
+		"/styles/output.css",
+		"/styles/prism-gruvbox-dark.css",
+		"/styles/prism-gruvbox-light.css",
+	}
+
+	templateData := struct {
+		CSSLinks []string
+	}{
+		CSSLinks: cssLinks,
+	}
+
+	err := template.Execute(w, templateData)
 	if err != nil {
-		app.errorLogger.Println("Failed to read file: ", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	var buf bytes.Buffer
-	if err := app.mdParser.Convert(content, &buf); err != nil {
-		app.errorLogger.Println("Failed to parse Markdown: ", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Fprintln(w, buf.String())
-
 }
